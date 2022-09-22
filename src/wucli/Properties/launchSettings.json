@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "wucli": {
+      "commandName": "Project",
+      "commandLineArgs": "help"
+    }
+  }
+}

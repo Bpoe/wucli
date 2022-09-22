@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>wucli</RootNamespace>
+    <AssemblyName>wucli</AssemblyName>
+
+    <PublishSingleFile>true</PublishSingleFile>
+    <!-- IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract -->
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <!-- TargetLatestRuntimePatch>False</TargetLatestRuntimePatch -->
+    <!-- RuntimeFrameworkVersion>6.0.0</RuntimeFrameworkVersion -->
+
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <COMReference Include="WUApiLib">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>b596cc9f-56e5-419e-a622-e01bb457431e</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+</Project>
