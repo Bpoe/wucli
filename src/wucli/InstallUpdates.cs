@@ -4,7 +4,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsUpdate;
-using WUApiLib;
 
 public static class InstallUpdates
 {
@@ -20,16 +19,22 @@ public static class InstallUpdates
 
     public static async Task<int> InstalledUpdates(string[] args)
     {
-        var result = await new WindowsUpdateClient()
+        var client = new WindowsUpdateClient();
+
+        var result = await client
             .SearchAsync(Criteria, CancellationToken.None);
 
-        var updates = result
-            .Updates
-            .Select(o => (IUpdate)o);
+        Console.WriteLine($"{result.Updates.Count} updates to be installed.");
 
-        foreach (var update in updates)
+        var installResults = await client
+            .InstallAsync(result.Updates, CancellationToken.None);
+
+        Console.WriteLine("Installation complete.");
+        
+        if (installResults.RebootRequired)
         {
-            Console.WriteLine(update.Title);
+            Console.WriteLine("Reboot Required");
+            return 1;
         }
 
         return 0;
