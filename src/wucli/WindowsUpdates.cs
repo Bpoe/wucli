@@ -1,6 +1,9 @@
-﻿namespace wucli;
+﻿using System;
+
+namespace wucli;
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.WindowsUpdate;
@@ -30,7 +33,7 @@ public static class WindowsUpdates
 
         if (downloadResults.ResultCode == OperationResultCode.orcFailed)
         {
-            Console.WriteLine($"Download failed. 0x{downloadResults.HResult.ToString("X")}");
+            Console.Error.WriteLine($"Download failed. 0x{downloadResults.HResult.ToString("X")}");
             return -1;
         }
 
@@ -39,7 +42,7 @@ public static class WindowsUpdates
 
         if (installResults.ResultCode == OperationResultCode.orcFailed)
         {
-            Console.WriteLine($"Installation failed. 0x{installResults.HResult.ToString("X")}");
+            Console.Error.WriteLine($"Installation failed. 0x{installResults.HResult.ToString("X")}");
             return -1;
         }
 
@@ -78,10 +81,7 @@ public static class WindowsUpdates
             .Updates
             .Select(o => (IUpdate)o);
 
-        foreach (var update in updates)
-        {
-            Console.WriteLine(update.Title);
-        }
+        WriteTable(updates);
 
         return 0;
     }
@@ -89,17 +89,38 @@ public static class WindowsUpdates
     public static async Task<int> ListInstalled()
     {
         var result = await new WindowsUpdateClient()
-            .SearchAsync(InstalledUpdatesCriteria, CancellationToken.None);
+            .SearchAsync(InstalledUpdatesCriteria, false, CancellationToken.None);
+
+        if (result.Updates.Count == 0)
+        {
+            Console.WriteLine("No updates installed.");
+            return 0;
+        }
 
         var updates = result
             .Updates
             .Select(o => (IUpdate)o);
 
-        foreach (var update in updates)
-        {
-            Console.WriteLine(update.Title);
-        }
+        WriteTable(updates);
 
         return 0;
     }
+
+    public static void WriteTable(IEnumerable<IUpdate> updates)
+    {
+        const int KbColumnWidth = 16;
+        var maxTitleLength = Console.WindowWidth - KbColumnWidth - 1;
+
+        Console.WriteLine("{0,-16} {1}", "KB", "Title");
+        Console.WriteLine(new string('-', Console.WindowWidth));
+        foreach (var update in updates)
+        {
+            var kbs = TrimToLength(
+                string.Join(", ", update.KBArticleIDs.Select(s => "KB" + (string)s)), KbColumnWidth);
+            Console.WriteLine("{0,-16} {1}", kbs, TrimToLength(update.Title, maxTitleLength));
+        }
+    }
+
+    private static string TrimToLength(string s, int maxLength)
+        => s.Length > maxLength ? string.Concat(s.AsSpan(0, maxLength - 3), "...") : s;
 }

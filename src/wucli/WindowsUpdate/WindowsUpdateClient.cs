@@ -38,13 +38,18 @@ public class WindowsUpdateClient
         return searcher.Search(criteria);
     }
 
-    public async Task<ISearchResult> SearchAsync(CancellationToken cancellationToken) => await SearchAsync(DefaultCriteria, cancellationToken);
+    public async Task<ISearchResult> SearchAsync(CancellationToken cancellationToken)
+        => await SearchAsync(DefaultCriteria, cancellationToken);
 
-    public async Task<ISearchResult> SearchAsync(IDictionary<string, object> criteria, CancellationToken cancellationToken) => await SearchAsync(GetCriteriaString(criteria), cancellationToken);
+    public async Task<ISearchResult> SearchAsync(IDictionary<string, object> criteria, CancellationToken cancellationToken)
+        => await SearchAsync(GetCriteriaString(criteria), cancellationToken);
 
     public async Task<ISearchResult> SearchAsync(string criteria, CancellationToken cancellationToken)
+        => await SearchAsync(criteria, true, cancellationToken);
+
+    public async Task<ISearchResult> SearchAsync(string criteria, bool online, CancellationToken cancellationToken)
     {
-        var searcher = GetUpdateSearcher();
+        var searcher = GetUpdateSearcher(online);
 
         var callback = new SearchCompletedCallback();
         var job = searcher.BeginSearch(criteria, callback, null);
@@ -143,10 +148,10 @@ public class WindowsUpdateClient
         return criteriaString.ToString();
     }
 
-    private IUpdateSearcher GetUpdateSearcher()
+    private IUpdateSearcher GetUpdateSearcher(bool online = true)
     {
         var searcher = session.CreateUpdateSearcher();
-        searcher.Online = true;
+        searcher.Online = online;
         searcher.ServerSelection = UpdateServerSelection;
         return searcher;
     }
