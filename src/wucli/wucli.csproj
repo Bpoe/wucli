@@ -2,13 +2,15 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>wucli</RootNamespace>
     <AssemblyName>wucli</AssemblyName>
+    <Version>0.1.0</Version>
 
     <PublishSingleFile>true</PublishSingleFile>
     <!-- IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract -->
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <!-- TargetLatestRuntimePatch>False</TargetLatestRuntimePatch -->
     <!-- RuntimeFrameworkVersion>6.0.0</RuntimeFrameworkVersion -->
 

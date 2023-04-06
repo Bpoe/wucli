@@ -20,7 +20,7 @@ public class WindowsUpdateClient
     }
 
     public WindowsUpdateClient(ServerSelection updateServerSelection)
-        : this(updateServerSelection, new UpdateSession { ClientApplicationID = "AzFacts" })
+        : this(updateServerSelection, new UpdateSession { ClientApplicationID = "wucli" })
     {
     }
 

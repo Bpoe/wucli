@@ -10,21 +10,27 @@ public static class CommandExtensions
         var criteriaOption = new Option<string>("--criteria", "The criteria for updates (Default: \"IsInstalled=0 AND IsHidden=0\"");
         criteriaOption.AddAlias("-c");
 
+        var rebootOption = new Option<bool>("--reboot", "Reboot the machine if any updates require a reboot.");
+        rebootOption.AddAlias("-r");
+
         var installCommand = new Command("install", "Install all available updates on this machine.");
         installCommand.AddOption(criteriaOption);
+        installCommand.AddOption(rebootOption);
         rootCommand.Add(installCommand);
         installCommand.SetHandler(
-            (criteria) =>
+            (criteria, reboot) =>
             {
                 var options = new WuOptions
                 {
                     Criteria = criteria,
+                    Reboot = reboot,
                 };
 
                 var result = WindowsUpdates.Install(options).Result;
                 Environment.Exit(result);
             },
-            criteriaOption);
+            criteriaOption,
+            rebootOption);
 
         return rootCommand;
     }

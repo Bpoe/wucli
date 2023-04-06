@@ -17,16 +17,46 @@ public static class WindowsUpdates
         var result = await client
             .SearchAsync(options.Criteria, CancellationToken.None);
 
+        if (result.Updates.Count == 0)
+        {
+            Console.WriteLine("No updates to install.");
+            return 0;
+        }
+
         Console.WriteLine($"{result.Updates.Count} updates to be installed.");
+
+        var downloadResults = await client
+            .DownloadAsync(result.Updates, CancellationToken.None);
+
+        if (downloadResults.ResultCode == OperationResultCode.orcFailed)
+        {
+            Console.WriteLine($"Download failed. 0x{downloadResults.HResult.ToString("X")}");
+            return -1;
+        }
 
         var installResults = await client
             .InstallAsync(result.Updates, CancellationToken.None);
+
+        if (installResults.ResultCode == OperationResultCode.orcFailed)
+        {
+            Console.WriteLine($"Installation failed. 0x{installResults.HResult.ToString("X")}");
+            return -1;
+        }
 
         Console.WriteLine("Installation complete.");
         
         if (installResults.RebootRequired)
         {
-            Console.WriteLine("Reboot Required");
+            if (options.Reboot)
+            {
+                Console.WriteLine("Rebooting...");
+                NativeMethods.Reboot();
+            }
+            else
+            {
+                Console.WriteLine("Reboot Required");
+            }
+
             return 1;
         }
 
@@ -37,6 +67,12 @@ public static class WindowsUpdates
     {
         var result = await new WindowsUpdateClient()
             .SearchAsync(options.Criteria, CancellationToken.None);
+
+        if (result.Updates.Count == 0)
+        {
+            Console.WriteLine("No updates available.");
+            return 0;
+        }
 
         var updates = result
             .Updates
