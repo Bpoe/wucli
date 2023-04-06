@@ -7,7 +7,7 @@ public static class CommandExtensions
 {
     public static RootCommand AddInstallCommand(this RootCommand rootCommand)
     {
-        var criteriaOption = new Option<string>("--criteria", "The criteria for updates (Default: \"IsInstalled=0 AND IsHidden=0\"");
+        var criteriaOption = new Option<string>("--criteria", "The criteria for updates (Default: \"IsInstalled=0 AND IsHidden=0\")");
         criteriaOption.AddAlias("-c");
 
         var rebootOption = new Option<bool>("--reboot", "Reboot the machine if any updates require a reboot.");
